@@ -1,0 +1,15 @@
+#!/bin/bash
+SFTPUSER=$1
+if [[ -z $SFTPUSER ]]
+then 
+	echo pse give me a user to forward gpg agent to 
+	exit 1
+fi 
+SFTPUID=`getent passwd ${SFTPUSER}`
+SFTPUID=${SFTPUID#*:} SFTPUID=${SFTPUID#*:} SFTPUID=${SFTPUID%%:*}
+MYUID=`id -u`
+sudo -u $SFTPUSER mkdir -m 0700 -p /var/run/user/${SFTPUID}/gnupg
+while true; 
+do
+	socat UNIX-CLIENT:/var/run/user/${MYUID}/pulse/ EXEC:"sudo -u $SFTPUSER nc -lU /var/run/user/${SFTPUID}/gnupg/S.gpg-agent"
+done

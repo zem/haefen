@@ -1,0 +1,24 @@
+#!/bin/bash
+# this script is an ssh wrapper which uses sudo instead of ssh 
+# it can be called by sshfs during mount
+while [[ -n $1 ]] 
+do 
+	if [[ $1 = "-l" ]]
+	then
+		shift
+		SFTPUSER=$1
+	fi
+	if [[ $1 == *@* ]]
+	then
+		SFTPUSER=${1%%@*}
+	fi
+	shift 
+done
+if [[ -z $SFTPUSER ]] 
+then
+	# unable to determine user to switch to 
+	echo unable to determine user to switch to >&2
+	exit 3
+fi
+sudo -u $SFTPUSER /usr/lib/sftp-server -d /home/${SFTPUSER}
+

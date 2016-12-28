@@ -1,0 +1,28 @@
+#!/bin/bash
+
+jail_init() {
+	cd /home
+	for usr in ${USER}-*
+	do
+		xauth list | (while read a ; do XAUTHORITY=/home/${usr}/.Xauthority sudo -u ${usr} xauth add $a ; done )
+	done
+	cp ${XAUTHORITY} ${XAUTHORITY}.jail_init
+}
+
+diff -q ${XAUTHORITY} ${XAUTHORITY}.jail_init || jail_init 
+
+JAILNAME=$1
+shift 
+if [[ ! ${JAILNAME} ]] 
+then
+	echo "FAIL: I need at least a jailname and a command"
+	echo "Usage: jail JAILNAME CMD ..."
+	exit 1
+fi
+if [[ ! ${@} ]] 
+then
+	echo "FAIL: I need at least a command to run in the jail named ${JAILNAME}"
+	exit 2
+fi
+XAUTHORITY=/home/${USER}-${JAILNAME}/.Xauthority sudo -u ${USER}-${JAILNAME} $@
+
