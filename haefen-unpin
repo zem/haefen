@@ -1,0 +1,14 @@
+#!/bin/bash
+CMD=${1##*/}
+PIN=~/bin/${CMD}
+if [[ ! ${CMD} ]]
+then
+	echo Fail, I need a command to unpin
+	exit 1
+fi
+if [[ ! -f ${PIN} ]]
+then 
+	echo file ${PIN} does not exist, please pin first 
+	exit 2
+fi
+rm ${PIN}
