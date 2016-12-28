@@ -1,0 +1,19 @@
+#!/bin/bash
+HAEFEN=$1
+shift
+CMD=${1##*/}
+PIN=~/bin/${CMD}
+if [[ ! ${CMD} ]]
+then
+	echo Fail, I need a command to pin haefen ${HAEFEN}
+	exit 1
+fi
+if [[ -f ${PIN} ]]
+then 
+	echo file ${PIN} already exists, please unpin first 
+	exit 2
+fi
+echo "#!/bin/bash" > ${PIN}
+echo XAUTHORITY=/home/${USER}-${HAEFEN}/.Xauthority >> ${PIN}
+echo "sudo -u ${USER}-${HAEFEN} ${@} \$\{\@\}" >> ${PIN}
+chmod a+x ${PIN}

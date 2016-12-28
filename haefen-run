@@ -1,28 +1,28 @@
 #!/bin/bash
 
-jail_init() {
+haefen_init() {
 	cd /home
 	for usr in ${USER}-*
 	do
 		xauth list | (while read a ; do XAUTHORITY=/home/${usr}/.Xauthority sudo -u ${usr} xauth add $a ; done )
 	done
-	cp ${XAUTHORITY} ${XAUTHORITY}.jail_init
+	cp ${XAUTHORITY} ${XAUTHORITY}.haefen_init
 }
 
-diff -q ${XAUTHORITY} ${XAUTHORITY}.jail_init || jail_init 
+diff -q ${XAUTHORITY} ${XAUTHORITY}.haefen_init || haefen_init 
 
-JAILNAME=$1
+HAEFEN=$1
 shift 
-if [[ ! ${JAILNAME} ]] 
+if [[ ! ${HAEFEN} ]] 
 then
 	echo "FAIL: I need at least a jailname and a command"
-	echo "Usage: jail JAILNAME CMD ..."
+	echo "Usage: jail HAEFEN CMD ..."
 	exit 1
 fi
 if [[ ! ${@} ]] 
 then
-	echo "FAIL: I need at least a command to run in the jail named ${JAILNAME}"
+	echo "FAIL: I need at least a command to run in the jail named ${HAEFEN}"
 	exit 2
 fi
-XAUTHORITY=/home/${USER}-${JAILNAME}/.Xauthority sudo -u ${USER}-${JAILNAME} $@
+XAUTHORITY=/home/${USER}-${HAEFEN}/.Xauthority sudo -u ${USER}-${HAEFEN} $@
 
